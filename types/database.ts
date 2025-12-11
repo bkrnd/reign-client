@@ -16,3 +16,9 @@ export interface Square {
     ownerId: string | null;
     defenseBonus: number;
 }
+
+export interface User {
+    id: string;
+    username: string;
+    createdAt: string;
+}
