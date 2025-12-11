@@ -25,7 +25,7 @@ export default {
       'accent-foreground': 'hsl(0 0% 98%)',
       'destructive': 'hsl(0 62.8% 30.6%)',
       'destructive-foreground': 'hsl(0 85.7% 97.3%)',
-      'border': 'hsl(240 3.7% 20%)',
+      'border': 'hsl(340 3.7% 30%)',
       'input': 'hsl(240 3.7% 15.9%)',
       'ring': 'hsl(346.8 77.2% 49.8%)',
       'chart-1': 'hsl(220 70% 50%)',
