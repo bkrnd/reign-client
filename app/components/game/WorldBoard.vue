@@ -17,16 +17,53 @@ const emit = defineEmits<{
   'square-click': [square: Square];
 }>();
 
+// Player colors (max 4 players)
+const playerColors = ['hsl(220 70% 50%)', 'hsl(160 60% 45%)', 'hsl(30 80% 55%)', 'hsl(280 65% 60%)'];
+
+// Compute player statistics: who owns what and how many squares
+const playerStats = computed(() => {
+  const squareCounts = new Map<string, number>();
+
+  // Count squares per player
+  props.squares.forEach(square => {
+    if (square.ownerId) {
+      squareCounts.set(square.ownerId, (squareCounts.get(square.ownerId) ?? 0) + 1);
+    }
+  });
+
+  // Sort player IDs alphabetically for stable color assignment
+  const sortedPlayerIds = Array.from(squareCounts.keys()).sort();
+
+  // Create stats with stable color indices based on sorted order
+  const stats = new Map<string, { ownerId: string; squareCount: number; colorIndex: number }>();
+  sortedPlayerIds.forEach((ownerId, index) => {
+    stats.set(ownerId, {
+      ownerId,
+      squareCount: squareCounts.get(ownerId)!,
+      colorIndex: index % playerColors.length
+    });
+  });
+
+  return stats;
+});
+
+// Get color index for a player (ensures consistent unique colors)
+const playerColorMap = computed(() => {
+  const colorMap = new Map<string, number>();
+  playerStats.value.forEach((stat, ownerId) => {
+    colorMap.set(ownerId, stat.colorIndex);
+  });
+  return colorMap;
+});
+
 // Get square color based on owner
 function getSquareColor(square: Square): string {
   if (!square || !square.ownerId) {
     return 'currentColor';  // Empty square
   }
 
-  // Different colors for different players
-  const colors = ['hsl(220 70% 50%)','hsl(160 60% 45%)','hsl(30 80% 55%)','hsl(280 65% 60%)'];
-  const hash = square.ownerId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return colors[hash % colors.length] ?? 'white';
+  const colorIndex = playerColorMap.value.get(square.ownerId) ?? 0;
+  return playerColors[colorIndex] ?? playerColors[0]!;
 }
 
 // Handle square click
@@ -58,6 +95,27 @@ const minBoardSize = computed(() => {
     <!-- Error message -->
     <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
       <span class="block sm:inline">{{ errorMessage }}</span>
+    </div>
+
+    <!-- Player Stats -->
+    <div v-if="playerStats.size > 0" class="mb-4 p-4 bg-card rounded-lg border border-border">
+      <h3 class="text-sm font-semibold text-card-foreground mb-3">Players</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div
+          v-for="[ownerId, stat] in playerStats"
+          :key="ownerId"
+          class="flex items-center gap-2 p-2 bg-background rounded border border-border"
+        >
+          <div
+            class="size-8 rounded shrink-0"
+            :style="{ backgroundColor: playerColors[stat.colorIndex] }"
+          ></div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-medium text-foreground truncate">{{ stat.squareCount }} squares</p>
+            <p class="text-xs text-muted-foreground">{{ ownerId }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Board Container with scroll -->
