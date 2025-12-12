@@ -22,10 +22,10 @@ const { data, error, pending } = useFetch<User[]>('/api/users', {
         <p class="text-destructive-foreground bg-destructive rounded-md px-4 py-2 w-fit mx-auto">Error loading players.</p>
       </template>
       <template v-else-if="data">
-        <BaseCard v-for="user in data" :key="user.id">
+        <UiCard v-for="user in data" :key="user.id">
           <h2 class="text-xl">{{ user.username }}</h2>
           <p class="text-muted-foreground">Created At: {{ user.createdAt }}</p>
-        </BaseCard>
+        </UiCard>
       </template>
     </div>
   </div>

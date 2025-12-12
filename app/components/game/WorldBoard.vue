@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Square } from '~~/types/database';
 
-const config = useRuntimeConfig()
-
 const props = defineProps<{
   worldData: {
     name: string;
@@ -10,18 +8,17 @@ const props = defineProps<{
     boardSize: number;
     maxPlayers: number;
   };
-  boardData: Square[];
+  squares: Square[];
+  isProcessing?: boolean;
+  errorMessage?: string;
 }>()
 
 const emit = defineEmits<{
-  'square-click': [squareId: string];
+  'square-click': [square: Square];
 }>();
-
-const squares = ref<Square[]>(props.boardData);
 
 // Get square color based on owner
 function getSquareColor(square: Square): string {
-
   if (!square || !square.ownerId) {
     return 'white';  // Empty square
   }
@@ -32,12 +29,11 @@ function getSquareColor(square: Square): string {
   return colors[hash % colors.length] ?? 'white';
 }
 
-// Handle square click - capture it!
-const isProcessing = ref(false);
-const errorMessage = ref('');
-
+// Handle square click
 function handleSquareClick(square: Square){
-  emit('square-click', square.id);
+  if (!props.isProcessing) {
+    emit('square-click', square);
+  }
 }
 
 const squareSize = 100;
@@ -47,8 +43,8 @@ const squareBorder = 10;
 <template>
   <div>
     <!-- Error message -->
-    <div v-if="errorMessage" style="color: red; margin: 10px 0;">
-      {{ errorMessage }}
+    <div v-if="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+      <span class="block sm:inline">{{ errorMessage }}</span>
     </div>
 
     <!-- Board -->
@@ -89,21 +85,11 @@ const squareBorder = 10;
       </svg>
 
       <!-- Loading overlay -->
-      <div v-if="isProcessing" style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.7);
-      ">
+      <div v-if="isProcessing">
         Processing...
       </div>
     </div>
-    
+
   </div>
 </template>
 

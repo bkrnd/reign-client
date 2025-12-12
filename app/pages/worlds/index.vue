@@ -22,7 +22,7 @@ const { data, error, pending } = useFetch<World[]>('/api/worlds', {
         <p class="text-destructive-foreground bg-destructive rounded-md px-4 py-2 w-fit mx-auto">Error loading worlds.</p>
       </template>
       <template v-else-if="data">
-        <BaseCard v-for="world in data" :key="world.id">
+        <UiCard v-for="world in data" :key="world.id">
           <NuxtLink :to="`/worlds/${world.slug}`">
             <h2 class="text-xl">{{ world.name }}</h2>
           </NuxtLink>
@@ -31,7 +31,7 @@ const { data, error, pending } = useFetch<World[]>('/api/worlds', {
           <p class="text-muted-foreground">Board Size: {{ world.boardSize }}</p>
           <p class="text-muted-foreground">Max Players: {{ world.maxPlayers }}</p>
           <p class="text-muted-foreground">Created At: {{ world.createdAt }}</p>
-        </BaseCard>
+        </UiCard>
       </template>
     </div>
   </div>

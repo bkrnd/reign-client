@@ -163,7 +163,7 @@ async function handleSquareClick(squareId: string) {
   <Head>
     <title>Reign</title>
   </Head>
-  <BaseCard class="container mt-4">
+  <UiCard class="container mt-4">
     <label>Player: </label>
 <!--    <input v-model="currentPlayerId" class="bg-input border border-border rounded px-2 py-1" placeholder="Enter your username" />-->
     <form>
@@ -185,10 +185,10 @@ async function handleSquareClick(squareId: string) {
       <p>Empty Squares: {{ stats.empty }}</p>
       <p>Winning Player: {{ stats.winningPlayer || 'N/A' }}</p>
     </div>
-  </BaseCard>
+  </UiCard>
   <div class="container mt-4">
 
-    <WorldBoard 
+    <GameWorldBoard
       :worldData="worldData"
       :boardData="squares"
       @square-click="onSquareClick"
