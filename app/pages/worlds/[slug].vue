@@ -57,20 +57,30 @@ function handleReset() {
     <title v-if="worldData">{{ worldData.name }} - World | Reign</title>
     <title v-else>Loading World... | Reign</title>
   </Head>
-  <div class="container mt-4">
-    <!-- User Info -->
-    <div v-if="auth.currentUser.value" class="mb-4 p-4 bg-card rounded border border-border">
-      <p class="text-sm text-card-foreground">Playing as: <strong>{{ auth.currentUser.value.username }}</strong></p>
+  <div class="container mx-auto px-4 py-6 max-w-7xl">
+    <!-- Header Section -->
+    <div class="flex justify-between items-start mb-6">
+      <div v-if="worldData">
+        <h1 class="text-3xl font-bold text-foreground">{{ worldData.name }}</h1>
+        <p class="text-sm text-muted-foreground mt-1">
+          {{ worldData.boardSize }}x{{ worldData.boardSize }} | Max Players: {{ worldData.maxPlayers }}
+        </p>
+      </div>
+
+      <div v-if="auth.currentUser.value" class="px-4 py-2 bg-card rounded-lg border border-border">
+        <p class="text-sm text-muted-foreground">Playing as</p>
+        <p class="font-semibold text-card-foreground">{{ auth.currentUser.value.username }}</p>
+      </div>
     </div>
 
-    <!-- World Info -->
-    <div v-if="worldData" class="mb-4">
-      <h1 class="text-3xl font-bold mb-2 text-foreground">{{ worldData.name }}</h1>
-      <p class="text-muted-foreground">Board Size: {{ worldData.boardSize }}x{{ worldData.boardSize }} | Max Players: {{ worldData.maxPlayers }}</p>
+    <!-- Error States -->
+    <div v-if="worldError || boardError" class="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-lg mb-6">
+      <h2 class="font-bold">Error loading world</h2>
+      <p class="text-sm">{{ worldError || boardError }}</p>
     </div>
 
     <!-- Game Board -->
-    <div v-if="gameState.worldData.value && gameState.squares.value.length > 0">
+    <div v-else-if="gameState.worldData.value && gameState.squares.value.length > 0" class="flex flex-col items-center">
       <GameWorldBoard
         :worldData="gameState.worldData.value"
         :squares="gameState.squares.value"
@@ -78,30 +88,24 @@ function handleReset() {
         :errorMessage="gameState.errorMessage.value"
         @square-click="handleSquareClick"
       />
-    </div>
 
-    <!-- Error States -->
-    <div v-else-if="worldError || boardError" class="bg-destructive border border-destructive text-destructive-foreground px-4 py-3 rounded">
-      <h1 class="font-bold">Error loading world</h1>
-      <p>{{ worldError || boardError }}</p>
+      <UiBaseButton
+        @click="handleReset"
+        :loading="gameState.isProcessing.value"
+        :disabled="!gameState.worldData.value"
+        variant="outline"
+        class="mt-6"
+      >
+        Reset World
+      </UiBaseButton>
     </div>
 
     <!-- Loading State -->
-    <div v-else class="flex items-center justify-center p-8">
+    <div v-else class="flex items-center justify-center py-20">
       <div class="text-center">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-        <p class="text-foreground">Loading world...</p>
+        <p class="text-muted-foreground">Loading world...</p>
       </div>
     </div>
-
-    <UiBaseButton
-      @click="handleReset"
-      :loading="gameState.isProcessing.value"
-      :disabled="!gameState.worldData.value"
-      variant="danger"
-      class="mt-4"
-    >
-      Reset World
-    </UiBaseButton>
   </div>
 </template>

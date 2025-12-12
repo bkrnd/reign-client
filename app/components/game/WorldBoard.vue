@@ -20,11 +20,11 @@ const emit = defineEmits<{
 // Get square color based on owner
 function getSquareColor(square: Square): string {
   if (!square || !square.ownerId) {
-    return 'white';  // Empty square
+    return 'currentColor';  // Empty square
   }
 
   // Different colors for different players
-  const colors = ['hsl(220 70% 50%)','hsl(160 60% 45%)','hsl(30 80% 55%)','hsl(280 65% 60%)','hsl(340 75% 55%)'];
+  const colors = ['hsl(220 70% 50%)','hsl(160 60% 45%)','hsl(30 80% 55%)','hsl(280 65% 60%)'];
   const hash = square.ownerId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length] ?? 'white';
 }
@@ -49,13 +49,13 @@ const squareBorder = 10;
 
     <!-- Board -->
     <div style="position: relative;">
-      <svg :width="(worldData.boardSize * squareSize)+squareBorder" :height="(worldData.boardSize * squareSize)+squareBorder" class="fill-current mb-4">
+      <svg :width="(worldData.boardSize * squareSize)+squareBorder" :height="(worldData.boardSize * squareSize)+squareBorder" class="fill-current mb-4 bg-primary text-muted">
         <template
             v-for="square in squares"
             :key="square.id"
         >
           <rect
-            class="square"
+            class="hover:stroke-muted-foreground"
             :x="((square.x) * squareSize)+squareBorder"
             :y="((square.y) * squareSize)+squareBorder"
             :width="squareSize - squareBorder"
@@ -92,10 +92,3 @@ const squareBorder = 10;
 
   </div>
 </template>
-
-<style scoped>
-.square:hover {
-  stroke-width: v-bind(squareBorder);
-  stroke: #e0234a;
-}
-</style>
