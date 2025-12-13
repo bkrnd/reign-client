@@ -21,4 +21,24 @@ export interface User {
     id: string;
     username: string;
     createdAt: string;
+    role?: 'USER' | 'ADMIN';
+    userType?: 'GUEST' | 'REGISTERED';
+}
+
+export interface AuthResponse {
+    token: string;
+    username: string;
+    userId: string;
+    role: 'USER' | 'ADMIN';
+    userType: 'GUEST' | 'REGISTERED';
+}
+
+export interface LoginRequest {
+    username: string;
+    password: string;
+}
+
+export interface RegisterRequest {
+    username: string;
+    password: string;
 }

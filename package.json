@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
+    "@types/node": "^25.0.1",
     "@types/sockjs-client": "^1.5.4"
   }
 }

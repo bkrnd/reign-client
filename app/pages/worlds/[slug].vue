@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
+
 import type { World, Square } from '~~/types/database';
 
 const config = useRuntimeConfig()
@@ -15,11 +19,6 @@ const ws = useGameWebSocket(slug)
 onMounted(() => {
   auth.initAuth()
 
-  // Auto-login for testing if no user
-  if (!auth.currentUser.value) {
-    auth.mockLogin(`Player${Math.floor(Math.random() * 1000)}`)
-  }
-
   // Setup WebSocket message handler BEFORE connecting
   ws.onMessage((message) => {
     gameState.handleWebSocketMessage(message)
@@ -34,14 +33,21 @@ onUnmounted(() => {
   ws.disconnect()
 })
 
+// Get auth headers
+const getAuthHeaders = () => ({
+  Authorization: auth.authToken.value ? `Bearer ${auth.authToken.value}` : ''
+})
+
 // Fetch world metadata
 const { data: worldData, error: worldError } = await useFetch<World>('/api/worlds/' + slug, {
-  baseURL: config.public.apiBase
+  baseURL: config.public.apiBase,
+  headers: getAuthHeaders()
 })
 
 // Fetch board squares
 const { data: boardData, error: boardError } = await useFetch<Square[]>('/api/worlds/' + slug + '/board', {
-  baseURL: config.public.apiBase
+  baseURL: config.public.apiBase,
+  headers: getAuthHeaders()
 })
 
 // Initialize game state when data loads
