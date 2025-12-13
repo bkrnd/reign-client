@@ -1,4 +1,11 @@
 <script setup lang="ts">
+const { initAuth } = useAuth()
+
+// Initialize authentication on app mount
+onMounted(() => {
+  initAuth()
+})
+
 useHead({
   link: [
     {

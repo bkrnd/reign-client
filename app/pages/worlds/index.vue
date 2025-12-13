@@ -1,10 +1,18 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
+
 const config = useRuntimeConfig()
+const { authToken } = useAuth()
 
 import type { World } from '~~/types/database';
 
 const { data, error, pending } = useFetch<World[]>('/api/worlds', {
-  baseURL: config.public.apiBase
+  baseURL: config.public.apiBase,
+  headers: {
+    Authorization: authToken.value ? `Bearer ${authToken.value}` : ''
+  }
 })
 </script>
 

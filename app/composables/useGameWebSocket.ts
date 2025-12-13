@@ -11,6 +11,7 @@ interface SquareUpdateMessage {
 
 export const useGameWebSocket = (worldSlug: string) => {
   const config = useRuntimeConfig()
+  const { authToken } = useAuth()
   let client: Client | null = null
   let subscription: any = null
 
@@ -29,6 +30,11 @@ export const useGameWebSocket = (worldSlug: string) => {
       client = new Client({
         // Use SockJS for compatibility
         webSocketFactory: () => new SockJS(`${config.public.apiBase}/ws`),
+
+        // Add JWT token to connection headers
+        connectHeaders: {
+          Authorization: authToken.value ? `Bearer ${authToken.value}` : ''
+        },
 
         // Debug disabled
         debug: () => {},
@@ -70,8 +76,9 @@ export const useGameWebSocket = (worldSlug: string) => {
 
         // On error
         onStompError: (frame) => {
-          error.value = frame.headers['message'] || 'WebSocket error'
+          error.value = frame.headers['message'] || 'WebSocket authentication failed or connection error'
           isConnected.value = false
+          console.error('STOMP error:', frame)
         },
 
         // On WebSocket error
