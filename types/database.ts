@@ -6,13 +6,35 @@ export interface User {
     userType?: 'GUEST' | 'REGISTERED';
 }
 
+export interface TeamMember {
+    id: string;
+    user: User;
+    joinedAt: string;
+    createdAt: string;
+}
+
+export interface Team {
+    id: string;
+    name: string;
+    color: string;
+    creator: User;
+    members: TeamMember[];
+    createdAt: string;
+}
+
 export interface World {
     id: string;
     slug: string;
     name: string;
     owner: User;
+    teams: Team[];
     boardSize: number;
     maxPlayers: number;
+    maxTeams: number;
+    minTeams: number;
+    maxTeamSize: number;
+    minTeamSize: number;
+    allowPlayerTeamCreation: boolean;
     createdAt: string;
 }
 

@@ -22,17 +22,31 @@ const { data, error, pending } = useApiFetch<World[]>('/api/worlds')
         <p class="text-destructive-foreground bg-destructive rounded-md px-4 py-2 w-fit mx-auto">Error loading worlds.</p>
       </template>
       <template v-else-if="data">
-        <UiCard v-for="world in data" :key="world.id">
-          <NuxtLink :to="`/worlds/${world.slug}`">
-            <h2 class="text-xl">{{ world.name }}</h2>
-          </NuxtLink>
-          <p class="text-muted-foreground">Slug: {{ world.slug }}</p>
-          <p class="text-muted-foreground">Owner ID: {{ world.owner.username }}</p>
-          <p class="text-muted-foreground">Board Size: {{ world.boardSize }}</p>
-          <p class="text-muted-foreground">Max Players: {{ world.maxPlayers }}</p>
-          <p class="text-muted-foreground">Created At: {{ world.createdAt }}</p>
+        <UiCard v-for="world in data" :key="world.id" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+          <div>
+            <NuxtLink :to="`/worlds/${world.slug}`">
+              <h2 class="text-xl">{{ world.name }}</h2>
+            </NuxtLink>
+            <p class="text-muted-foreground">Owner: {{ world.owner.username }}</p>
+            <p class="text-muted-foreground">Board Size: {{ world.boardSize }}</p>
+            <p class="text-muted-foreground">Max Players: {{ world.maxPlayers }}</p>
+            <p class="text-muted-foreground">Number of teams: {{ world.minTeams === world.maxTeams ? world.maxTeams : world.minTeams + ' - ' + world.maxTeams }}</p>
+            <p class="text-muted-foreground">Team Size: {{ world.minTeamSize === world.maxTeamSize ? world.maxTeamSize : world.minTeamSize + ' - ' + world.maxTeamSize }}</p>
+            <p class="text-muted-foreground">Created At: {{ world.createdAt }}</p>
+          </div>
+          <div>
+            <p>Teams:</p>
+            <dl v-for="team in world.teams" :key="team.id">
+              <dt class="text-sm font-medium text-foreground pl-4">{{ team.name }}</dt>
+              <dd v-for="member in team.members" :key="member.id"
+                class="text-sm text-secondary-foreground pl-8"
+              >
+                 - {{ member.user.username }}
+              </dd>
+            </dl>
+          </div>
           <UiBaseButton
-            class="mt-4"
+            class="mt-4 w-fit self-start"
             @click="() => $router.push(`/worlds/${world.slug}`)"
           >
             Join World
