@@ -43,8 +43,29 @@ watchEffect(() => {
   }
 })
 
+function isPlayerInTeam(): boolean {
+  if (!auth.currentUser.value || !gameState.worldData.value?.teams) {
+    return false
+  }
+  const userTeam = gameState.worldData.value.teams.find(team =>
+    team.members.some(member => member.user.id === auth.currentUser.value?.id)
+  )
+  return !!userTeam
+}
+
 // Handle square click
 function handleSquareClick(square: Square) {
+  if (!auth.currentUser.value) {
+    alert('You must be logged in to interact with the world.')
+    return
+  }
+
+  if ( !isPlayerInTeam() ) {
+    alert('You must be in a team to interact with the world. Please join a team or contact an administrator.')
+    return
+  }
+
+  console.log('Current user:', auth.currentUser.value)
   if ( square.owner?.id === auth.currentUser.value?.id ) {
     // Upgrade defense bonus if owned by current user
     gameState.defendSquare(square)
