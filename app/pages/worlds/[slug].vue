@@ -108,6 +108,15 @@ function handleReset() {
         </p>
       </div>
 
+      <UiBaseButton
+          @click="handleReset"
+          :loading="gameState.isResetting.value"
+          :disabled="!gameState.worldData.value"
+          variant="outline"
+      >
+        Reset World
+      </UiBaseButton>
+
       <div class="flex gap-4 items-start">
         <!-- WebSocket Status -->
         <div class="px-3 py-2 bg-card rounded-lg border border-border flex items-center gap-2">
@@ -181,16 +190,6 @@ function handleReset() {
         :errorMessage="gameState.errorMessage.value"
         @square-click="handleSquareClick"
       />
-
-      <UiBaseButton
-        @click="handleReset"
-        :loading="gameState.isResetting.value"
-        :disabled="!gameState.worldData.value"
-        variant="outline"
-        class="mt-6"
-      >
-        Reset World
-      </UiBaseButton>
     </div>
 
     <!-- Loading State -->
