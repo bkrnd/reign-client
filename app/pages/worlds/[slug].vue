@@ -145,7 +145,7 @@ function handleReset() {
     <div v-else-if="gameState.worldData.value && gameState.squares.value.length > 0" class="flex flex-col items-center">
 
       <!-- Player Stats -->
-      <div class="mb-4 p-4 bg-card rounded-lg border border-border">
+      <div class="mb-4 p-4 bg-card container rounded-lg border border-border">
         <h3 class="text-sm font-semibold text-card-foreground mb-3">Teams and players</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div
