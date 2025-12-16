@@ -21,62 +21,22 @@ const emit = defineEmits<{
   'square-click': [square: Square];
 }>();
 
-
-// TODO this is just temporary until we have proper teams
-const teamColorKeys = <string[]>[
-  'red',
-  'blue',
-  'green',
-  'yellow',
-  'purple',
-  'teal'
-];
-
-const playerStats = computed(() => {
-  const squareCounts = new Map<string, number>();
-
-  // Count squares per player
-  props.squares.forEach(square => {
-    if (square.owner) {
-      squareCounts.set(square.owner.username, (squareCounts.get(square.owner.username) ?? 0) + 1);
-    }
-  });
-
-  const sortedPlayerIds = Array.from(squareCounts.keys()).sort();
-
-  // Get current color mode, default to dark if not set
-  const mode = (colorMode.value === 'light' || colorMode.value === 'dark') ? colorMode.value : 'dark';
-
-  const stats = new Map<string, { squareCount: number; color: string }>();
-  sortedPlayerIds.forEach((ownerUsername, index) => {
-    stats.set(ownerUsername, {
-      squareCount: squareCounts.get(ownerUsername) ?? 0,
-      // TODO teams will be stored in database later
-      color: teamColor.getTeamColor(
-        teamColorKeys[index % teamColorKeys.length] as any, mode
-      )
-    });
-  });
-
-  return stats;
-});
-
-// Get color index for a player (ensures consistent unique colors)
-const playerColorMap = computed(() => {
-  const colorMap = new Map<string, string>();
-  playerStats.value.forEach((stat, ownerUsername) => {
-    colorMap.set(ownerUsername, stat.color);
-  });
-  return colorMap;
-});
-
 // Get square color based on owner
 function getSquareColor(square: Square): string {
   if (!square || !square.owner) {
     return 'currentColor';  // Empty square
   }
+  const mode = (colorMode.value === 'light' || colorMode.value === 'dark') ? colorMode.value : 'dark';
 
-  return playerColorMap.value.get(square.owner.username) ?? 'currentColor';
+  let colorKey = 'currentColor' as "red" | "blue" | "green" | "yellow" | "purple" | "teal";
+  const team = (props.worldData as any).teams?.find((t: any) =>
+    t.members.some((member: any) => member.user.id === square.owner!.id)
+  );
+  if (team && team.color) {
+    colorKey = team.color;
+  }
+
+  return teamColor.getTeamColor( colorKey, mode);
 }
 
 // Handle square click
