@@ -1,5 +1,4 @@
-
-export const useTeam = () => {
+export const useTeamColor = () => {
     const teamColors = {
         red: {
             lightMode: '#ff1a1a',

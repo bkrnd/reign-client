@@ -16,7 +16,7 @@ export interface TeamMember {
 export interface Team {
     id: string;
     name: string;
-    color: string;
+    color: "red" | "blue" | "green" | "yellow" | "purple" | "teal";
     creator: User;
     members: TeamMember[];
     createdAt: string;

@@ -2,7 +2,7 @@
 import type {Square, User} from '~~/types/database';
 
 const auth = useAuth()
-const team = useTeam()
+const teamColor = useTeamColor()
 const colorMode = useColorMode()
 
 const props = defineProps<{
@@ -52,7 +52,7 @@ const playerStats = computed(() => {
     stats.set(ownerUsername, {
       squareCount: squareCounts.get(ownerUsername) ?? 0,
       // TODO teams will be stored in database later
-      color: team.getTeamColor(
+      color: teamColor.getTeamColor(
         teamColorKeys[index % teamColorKeys.length] as any, mode
       )
     });
@@ -108,27 +108,6 @@ const minBoardSize = computed(() => {
     <!-- Error message -->
     <div v-if="errorMessage" class="bg-destructive border border-destructive text-destructive-foreground px-4 py-3 rounded mb-4" role="alert">
       <span class="block sm:inline">{{ errorMessage }}</span>
-    </div>
-
-    <!-- Player Stats -->
-    <div v-if="playerStats.size > 0" class="mb-4 p-4 bg-card rounded-lg border border-border">
-      <h3 class="text-sm font-semibold text-card-foreground mb-3">Players</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div
-          v-for="[owner, stat] in playerStats"
-          :key="owner"
-          class="flex items-center gap-2 p-2 bg-background rounded border border-border"
-        >
-          <div
-            class="size-8 rounded shrink-0"
-            :style="{ backgroundColor: stat.color }"
-          ></div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-medium text-foreground truncate">{{ stat.squareCount }} squares</p>
-            <p class="text-xs text-muted-foreground">{{ owner }}</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Board Container with scroll -->

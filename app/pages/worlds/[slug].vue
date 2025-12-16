@@ -8,6 +8,9 @@ import type { World, Square } from '~~/types/database';
 const route = useRoute()
 const auth = useAuth()
 const gameState = useGameState()
+const teamColor = useTeamColor()
+const colorMode = useColorMode()
+
 
 const slug = Array.isArray(route.params.slug) ? route.params.slug[0] : (route.params.slug ?? '')
 
@@ -75,6 +78,12 @@ function handleSquareClick(square: Square) {
   }
 }
 
+function getTeamColor( teamColorKey: string ): string {
+  const mode = (colorMode.value === 'light' || colorMode.value === 'dark') ? colorMode.value : 'dark';
+
+  return teamColor.getTeamColor( teamColorKey as any, mode )
+}
+
 // Handle world reset
 function handleReset() {
 
@@ -94,6 +103,8 @@ function handleReset() {
         <h1 class="text-3xl font-bold text-foreground">{{ worldData.name }}</h1>
         <p class="text-sm text-muted-foreground mt-1">
           {{ worldData.boardSize }}x{{ worldData.boardSize }} | Max Players: {{ worldData.maxPlayers }}
+          | Number of teams: {{ worldData.minTeams === worldData.maxTeams ? worldData.maxTeams : worldData.minTeams + ' - ' + worldData.maxTeams }}
+          | Team Size: {{ worldData.minTeamSize === worldData.maxTeamSize ? worldData.maxTeamSize : worldData.minTeamSize + ' - ' + worldData.maxTeamSize }}
         </p>
       </div>
 
@@ -132,6 +143,37 @@ function handleReset() {
 
     <!-- Game Board -->
     <div v-else-if="gameState.worldData.value && gameState.squares.value.length > 0" class="flex flex-col items-center">
+
+      <!-- Player Stats -->
+      <div class="mb-4 p-4 bg-card rounded-lg border border-border">
+        <h3 class="text-sm font-semibold text-card-foreground mb-3">Teams and players</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div
+              v-for="team in gameState.worldData.value.teams"
+              :key="team.id"
+              class="flex items-center gap-2 p-2 bg-background rounded border border-border"
+          >
+            <div
+                class="size-8 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold text-foreground"
+                :style="{ backgroundColor: getTeamColor( team.color ) }"
+            >
+              <div class="bg-background/30 size-6 rounded flex items-center justify-center">
+<!--                calculate Number of squares all played by team-->
+                {{ gameState.squares.value.filter(square => square.owner && team.members.some(member => member.user.id === square.owner!.id)).length }}
+              </div>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-medium text-foreground truncate">{{ team.name }}</p>
+              <p class="text-xs text-muted-foreground">
+                <span v-for="(member, index) in team.members" :key="member.user.id">
+                  {{ member.user.username }}<span v-if="index < team.members.length - 1">, </span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <GameWorldBoard
         :worldData="gameState.worldData.value"
         :squares="gameState.squares.value"
