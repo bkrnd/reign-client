@@ -130,12 +130,6 @@ const handleLeaveTeam = async (world: World) => {
             </div>
           </div>
           <div class="md:col-span-2 flex flex-col md:flex-row gap-4 mt-4">
-            <UiBaseButton
-              variant="secondary"
-              @click="() => $router.push(`/worlds/${world.slug}`)"
-            >
-              View World
-            </UiBaseButton>
 
             <UiBaseButton
               v-if="!isUserInTeam(world)"
@@ -145,15 +139,22 @@ const handleLeaveTeam = async (world: World) => {
             >
               {{ isWorldFull(world) ? 'World Full' : 'Join World'}}
             </UiBaseButton>
-            <UiBaseButton
-                v-else
-              variant="danger"
-              :loading="isLeaving === world.id"
-              :disabled="isLeaving === world.id"
-              @click="handleLeaveTeam(world)"
-            >
-              Leave Team
-            </UiBaseButton>
+            <template v-else>
+              <UiBaseButton
+                  variant="outline"
+                  @click="() => $router.push(`/worlds/${world.slug}`)"
+              >
+                View World
+              </UiBaseButton>
+              <UiBaseButton
+                variant="secondary"
+                :loading="isLeaving === world.id"
+                :disabled="isLeaving === world.id"
+                @click="handleLeaveTeam(world)"
+              >
+                Leave Team
+              </UiBaseButton>
+            </template>
             <UiBaseButton
               v-if="world.owner.id === auth.currentUser.value?.id"
               class="items-center flex"
