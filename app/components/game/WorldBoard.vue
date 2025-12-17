@@ -8,6 +8,7 @@ const props = defineProps<{
     name: string;
     slug: string;
     boardSize: number;
+    boardType: 'SQUARE' | 'HEXAGON';
     maxPlayers: number;
   };
   squares: Square[];
@@ -19,7 +20,9 @@ const emit = defineEmits<{
   'square-click': [square: Square];
 }>();
 
-const isHexGrid = ref(true);
+const isHexGrid = computed(() => {
+  return props.worldData.boardType === 'HEXAGON';
+});
 
 // Hover state (the currently hovered square)
 const hoveredSquare = ref<Square | null>(null);
