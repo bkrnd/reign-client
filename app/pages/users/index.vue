@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { User } from '~~/types/database';
 
+import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
+
 const { data, error, pending } = useApiFetch<User[]>('/api/users')
 </script>
 
@@ -20,7 +25,8 @@ const { data, error, pending } = useApiFetch<User[]>('/api/users')
       <template v-else-if="data">
         <UiCard v-for="user in data" :key="user.id">
           <h2 class="text-xl">{{ user.username }}</h2>
-          <p class="text-muted-foreground">Created At: {{ user.createdAt }}</p>
+          <p class="text-muted-foreground">{{ user.userType }}</p>
+          <p class="text-muted-foreground">Created At: {{ dayjs(user.createdAt).fromNow() }}</p>
         </UiCard>
       </template>
     </div>

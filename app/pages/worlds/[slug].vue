@@ -144,6 +144,12 @@ function handleReset() {
     <title v-else>Loading World... | Reign</title>
   </Head>
   <div class="container mx-auto px-4 py-6">
+    <!-- Back to Worlds Link -->
+    <NuxtLink to="/worlds" class="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground mb-4 transition-colors">
+      <Icon name="mdi:arrow-left" size="20" />
+      <span>Back to Worlds</span>
+    </NuxtLink>
+
     <!-- Header Section -->
     <div class="flex justify-between items-start mb-6">
       <div v-if="worldData">

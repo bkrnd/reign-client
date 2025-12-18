@@ -49,6 +49,10 @@ const isWorldFull = (world: World) => {
   return totalMembers >= world.maxPlayers
 }
 
+const getCurrentPlayerCount = (world: World) => {
+  return world.teams.reduce((sum, team) => sum + team.members.length, 0)
+}
+
 // Open join modal
 const openJoinModal = (world: World) => {
   selectedWorld.value = world
@@ -209,7 +213,10 @@ const handleDeleteWorld = async (world: World) => {
             <p class="text-muted-foreground">Owner: {{ world.owner.username }}</p>
             <p class="text-muted-foreground">Board Type: {{ world.boardType }}</p>
             <p class="text-muted-foreground">Board Size: {{ world.boardSize }}</p>
-            <p class="text-muted-foreground">Max Players: {{ world.maxPlayers }}</p>
+            <p class="text-muted-foreground">
+              Players: {{ getCurrentPlayerCount(world) }}/{{ world.maxPlayers }}
+              <span v-if="isWorldFull(world)" class="text-yellow-600 dark:text-yellow-400 font-semibold">(Full)</span>
+            </p>
             <p class="text-muted-foreground">Number of teams: {{ world.minTeams === world.maxTeams ? world.maxTeams : world.minTeams + ' - ' + world.maxTeams }}</p>
             <p class="text-muted-foreground">Team Size: {{ world.minTeamSize === world.maxTeamSize ? world.maxTeamSize : world.minTeamSize + ' - ' + world.maxTeamSize }}</p>
             <p class="text-muted-foreground">Created At: {{ dayjs(world.createdAt).fromNow() }}</p>
@@ -286,7 +293,7 @@ const handleDeleteWorld = async (world: World) => {
             <UiBaseButton
               v-if="world.owner.id === auth.currentUser.value?.id"
               class="items-center flex"
-              variant="secondary"
+              variant="danger"
               @click="handleDeleteWorld(world)"
               :loading="isDeleting === world.id"
               :disabled="isDeleting === world.id"
