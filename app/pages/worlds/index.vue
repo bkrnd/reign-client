@@ -13,15 +13,48 @@ import type { World } from '~~/types/database';
 
 const auth = useAuth()
 const teamColor = useTeamColor()
+const route = useRoute()
+const router = useRouter()
 
-// Filter state
-const searchQuery = ref('')
-const isPublicFilter = ref<string>('all') // 'all', 'public', 'private'
-const boardTypeFilter = ref<string>('all') // 'all', 'HEXAGON', 'SQUARE'
-const hideFullServers = ref(false)
+// Read filters from URL query parameters
+const searchQuery = computed({
+  get: () => (route.query.s as string) || '',
+  set: (value: string) => updateQuery({ s: value || undefined })
+})
 
-// Build query params for API call
-const queryParams = computed(() => {
+const isPublicFilter = computed({
+  get: () => {
+    const visibility = route.query.visibility as string
+    return visibility || 'all'
+  },
+  set: (value: string) => updateQuery({ visibility: value === 'all' ? undefined : value })
+})
+
+const boardTypeFilter = computed({
+  get: () => {
+    const boardType = route.query.boardType as string
+    return boardType || 'all'
+  },
+  set: (value: string) => updateQuery({ boardType: value === 'all' ? undefined : value })
+})
+
+const hideFullServers = computed({
+  get: () => route.query.hideFull === 'true',
+  set: (value: boolean) => updateQuery({ hideFull: value ? 'true' : undefined })
+})
+
+// Helper function to update query parameters
+const updateQuery = (newParams: Record<string, string | undefined>) => {
+  router.push({
+    query: {
+      ...route.query,
+      ...newParams
+    }
+  })
+}
+
+// Build query params for API call from URL
+const apiQueryParams = computed(() => {
   const params: Record<string, any> = {}
 
   if (searchQuery.value.trim()) {
@@ -46,7 +79,7 @@ const queryParams = computed(() => {
 })
 
 const { data, error, pending, refresh } = useApiFetch<World[]>('/api/worlds', {
-  query: queryParams
+  query: apiQueryParams
 })
 
 // Modal state
