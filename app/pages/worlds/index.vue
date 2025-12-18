@@ -293,7 +293,7 @@ const handleDeleteWorld = async (world: World) => {
       <template v-else-if="error">
         <p class="text-destructive-foreground bg-destructive rounded-md px-4 py-2 w-fit mx-auto">Error loading worlds.</p>
       </template>
-      <template v-else-if="data">
+      <template v-else-if="data && data.length > 0">
         <UiCard v-for="world in data" :key="world.id" class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
           <div>
             <div class="flex items-center gap-2">
@@ -400,6 +400,9 @@ const handleDeleteWorld = async (world: World) => {
             </UiBaseButton>
           </div>
         </UiCard>
+      </template>
+      <template v-else-if="data && data.length === 0">
+        <p class="text-secondary-foreground bg-secondary rounded-md px-4 py-2 w-fit mx-auto">No worlds found.</p>
       </template>
     </div>
 
